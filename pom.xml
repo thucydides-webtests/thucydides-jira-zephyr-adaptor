@@ -7,9 +7,9 @@
         <version>0.9.210</version>
     </parent>
     <groupId>net.thucydides.plugins.jira</groupId>
-    <artifactId>thucydides-jira-requirements-provider</artifactId>
-    <version>0.9.211-SNAPSHOT</version>
-    <name>thucydides-jira-requirements-provider</name>
+    <artifactId>thucydides-jira-zephyr-adaptor</artifactId>
+    <version>0.9.210-SNAPSHOT</version>
+    <name>thucydides-jira-zephyr-adaptor</name>
     <packaging>jar</packaging>
 
     <description>Read Thucydides requirements from JIRA Story and Epic cards</description>
