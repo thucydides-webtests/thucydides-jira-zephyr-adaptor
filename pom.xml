@@ -8,7 +8,7 @@
     </parent>
     <groupId>net.thucydides.plugins.jira</groupId>
     <artifactId>thucydides-jira-requirements-provider</artifactId>
-    <version>0.9.210</version>
+    <version>0.9.211-SNAPSHOT</version>
     <name>thucydides-jira-requirements-provider</name>
     <packaging>jar</packaging>
 
