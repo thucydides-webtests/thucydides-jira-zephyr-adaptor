@@ -8,7 +8,7 @@
     </parent>
     <groupId>net.thucydides.plugins.jira</groupId>
     <artifactId>thucydides-jira-zephyr-adaptor</artifactId>
-    <version>0.9.212-SNAPSHOT</version>
+    <version>0.9.212</version>
     <name>thucydides-jira-zephyr-adaptor</name>
     <packaging>jar</packaging>
 
