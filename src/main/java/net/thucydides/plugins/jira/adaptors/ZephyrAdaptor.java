@@ -39,12 +39,16 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
 
     private static final String ZEPHYR_REST_API = "rest/zephyr/1.0";
 
-    private final static Map<String, TestResult> TEST_STATUS_MAP
-            = ImmutableMap.of("PASS", TestResult.SUCCESS,
-                              "FAIL", TestResult.FAILURE,
-                              "WIP", TestResult.PENDING,
-                              "BLOCKED", TestResult.SKIPPED,
-                              "UNEXECUTED", TestResult.IGNORED);
+    private static Map<String, TestResult> TEST_STATUS_MAP;
+    {
+        TEST_STATUS_MAP = Maps.newHashMap();
+        TEST_STATUS_MAP.put("PASS", TestResult.SUCCESS);
+        TEST_STATUS_MAP.put("FAIL", TestResult.FAILURE);
+        TEST_STATUS_MAP.put("WIP", TestResult.PENDING);
+        TEST_STATUS_MAP.put("BLOCKED", TestResult.SKIPPED);
+        TEST_STATUS_MAP.put("UNEXECUTED", TestResult.IGNORED);
+        TEST_STATUS_MAP.put("DESCOPED", TestResult.IGNORED);
+    }
 
     private final JerseyJiraClient jiraClient;
     private final String jiraProject;
@@ -64,39 +68,44 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
     public List<TestOutcome> loadOutcomes() throws IOException {
         try {
             List<IssueSummary> manualTests = jiraClient.findByJQL("type=Test and project=" + jiraProject);
-            return convert(manualTests, toTestOutcomes());
+            return extractTestOutcomesFrom(manualTests);
         } catch (JSONException e) {
             throw new IllegalArgumentException("Failed to load Zephyr manual tests", e);
         }
     }
 
-    private Converter<IssueSummary, TestOutcome> toTestOutcomes() {
-        return new Converter<IssueSummary, TestOutcome>() {
-
-            @Override
-            public TestOutcome convert(IssueSummary issue) {
-
-                try {
-                    List<IssueSummary> associatedIssues = getLabelsWithMatchingIssues(issue);
-                    TestOutcome outcome = TestOutcome.forTestInStory("Manual test - " + issue.getSummary() + " (" + issue.getKey() + ")",
-                                                                     storyFrom(associatedIssues));
-                    outcome.setDescription(issue.getRenderedDescription());
-                    outcome = outcomeWithTagsForIssues(outcome, issue, associatedIssues);
-                    TestExecutionRecord testExecutionRecord = getTestExecutionRecordFor(issue.getId());
-
-                    outcome.clearStartTime();
-
-                    addTestStepsTo(outcome, testExecutionRecord, issue.getId());
-
-                    if (noStepsAreDefined(outcome)) {
-                        updateOverallTestOutcome(outcome, testExecutionRecord);
-                    }
-                    return outcome.asManualTest();
-                } catch (JSONException e) {
-                    throw new IllegalArgumentException(e);
-                }
+    private List<TestOutcome> extractTestOutcomesFrom(List<IssueSummary> manualTests) throws JSONException {
+        List<TestOutcome> outcomes = Lists.newArrayList();
+        for(IssueSummary manualTest : manualTests) {
+            TestExecutionRecord testExecutionRecord = getTestExecutionRecordFor(manualTest.getId());
+            if (!testExecutionRecord.isDescoped) {
+                outcomes.add(convert(manualTest));
             }
-        };
+        }
+        return outcomes;
+    }
+
+    public TestOutcome convert(IssueSummary issue) {
+
+        try {
+            List<IssueSummary> associatedIssues = getLabelsWithMatchingIssues(issue);
+            TestOutcome outcome = TestOutcome.forTestInStory("Manual test - " + issue.getSummary() + " (" + issue.getKey() + ")",
+                    storyFrom(associatedIssues));
+            outcome.setDescription(issue.getRenderedDescription());
+            outcome = outcomeWithTagsForIssues(outcome, issue, associatedIssues);
+            TestExecutionRecord testExecutionRecord = getTestExecutionRecordFor(issue.getId());
+
+            outcome.clearStartTime();
+
+            addTestStepsTo(outcome, testExecutionRecord, issue.getId());
+
+            if (noStepsAreDefined(outcome)) {
+                updateOverallTestOutcome(outcome, testExecutionRecord);
+            }
+            return outcome.asManualTest();
+        } catch (JSONException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     private void updateOverallTestOutcome(TestOutcome outcome, TestExecutionRecord testExecutionRecord) {
@@ -146,10 +155,12 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
     class TestExecutionRecord {
         public final TestResult testResult;
         public final DateTime executionDate;
+        public final boolean isDescoped;
 
-        TestExecutionRecord(TestResult testResult, DateTime executionDate) {
+        TestExecutionRecord(TestResult testResult, DateTime executionDate, boolean isDescoped) {
             this.testResult = testResult;
             this.executionDate = executionDate;
+            this.isDescoped = isDescoped;
         }
     }
 
@@ -167,9 +178,10 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
             JSONObject latestSchedule = schedules.getJSONObject(0);
             String executionStatus = latestSchedule.getString("executionStatus");
             DateTime executionDate = executionDateFor(latestSchedule);
-            return new TestExecutionRecord(getTestResultFrom(executionStatus, statusMap), executionDate);
+            boolean descoped = (executionStatus.equalsIgnoreCase("descoped"));
+            return new TestExecutionRecord(getTestResultFrom(executionStatus, statusMap), executionDate, descoped);
         } else {
-            return new TestExecutionRecord(TestResult.PENDING, null);
+            return new TestExecutionRecord(TestResult.PENDING, null, false);
         }
     }
 

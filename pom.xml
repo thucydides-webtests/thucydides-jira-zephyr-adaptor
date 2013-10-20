@@ -4,11 +4,11 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.210</version>
+        <version>0.9.220-RC1</version>
     </parent>
     <groupId>net.thucydides.plugins.jira</groupId>
     <artifactId>thucydides-jira-zephyr-adaptor</artifactId>
-    <version>0.9.213-SNAPSHOT</version>
+    <version>0.9.220-RC1-SNAPSHOT</version>
     <name>thucydides-jira-zephyr-adaptor</name>
     <packaging>jar</packaging>
 
@@ -16,8 +16,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <thucydides.version>0.9.210</thucydides.version>
-        <thucydides.jira.version>0.9.211</thucydides.jira.version>
+        <thucydides.version>0.9.220-RC1</thucydides.version>
+        <thucydides.jira.version>0.9.220-RC1</thucydides.jira.version>
     </properties>
 
     <scm>
