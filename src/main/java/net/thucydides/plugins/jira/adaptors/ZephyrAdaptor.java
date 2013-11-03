@@ -58,10 +58,11 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
     }
 
     public ZephyrAdaptor(JIRAConfiguration jiraConfiguration) {
+        jiraProject = jiraConfiguration.getProject();
         jiraClient = new JerseyJiraClient(jiraConfiguration.getJiraUrl(),
                                           jiraConfiguration.getJiraUser(),
-                                          jiraConfiguration.getJiraPassword());
-        jiraProject = jiraConfiguration.getProject();
+                                          jiraConfiguration.getJiraPassword(),
+                                          jiraProject);
     }
 
     @Override
