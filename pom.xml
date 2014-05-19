@@ -4,11 +4,11 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.228</version>
+        <version>0.9.244</version>
     </parent>
     <groupId>net.thucydides.plugins.jira</groupId>
     <artifactId>thucydides-jira-zephyr-adaptor</artifactId>
-    <version>0.9.229-SNAPSHOT</version>
+    <version>0.9.244-SNAPSHOT</version>
     <name>thucydides-jira-zephyr-adaptor</name>
     <packaging>jar</packaging>
 
@@ -16,8 +16,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <thucydides.version>0.9.228</thucydides.version>
-        <thucydides.jira.version>0.9.228</thucydides.jira.version>
+        <thucydides.version>0.9.244</thucydides.version>
+        <thucydides.jira.version>0.9.244</thucydides.jira.version>
     </properties>
 
     <scm>
@@ -65,14 +65,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.11</version>
+                <version>2.17</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.11</version>
+                <version>2.17</version>
                 <configuration>
                     <includes>
                         <include>**/When*.java</include>
@@ -86,11 +86,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

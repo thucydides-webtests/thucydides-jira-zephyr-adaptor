@@ -1,10 +1,8 @@
 package net.thucydides.plugins.jira.adaptors;
 
-import ch.lambdaj.function.convert.Converter;
 import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.Story;
@@ -28,9 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import static ch.lambdaj.Lambda.convert;
 
 /**
  * Read manual test results from the JIRA Zephyr plugin.
@@ -92,7 +87,7 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
             List<IssueSummary> associatedIssues = getLabelsWithMatchingIssues(issue);
             TestOutcome outcome = TestOutcome.forTestInStory("Manual test - " + issue.getSummary() + " (" + issue.getKey() + ")",
                     storyFrom(associatedIssues));
-            outcome.setDescription(issue.getRenderedDescription());
+            outcome.setDescription(issue.getRendered().getDescription());
             outcome = outcomeWithTagsForIssues(outcome, issue, associatedIssues);
             TestExecutionRecord testExecutionRecord = getTestExecutionRecordFor(issue.getId());
 
